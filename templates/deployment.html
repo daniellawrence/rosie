@@ -34,7 +34,11 @@
 	    <a href='http://{{url}}'>{{url}}</a>
 	    {% endfor %}
 	  </td>
-	  <td>{{node.fqdn}}</td>
+	  <td>
+	   <a href='http://puppet.f2l.info:8000/node/{{node.fqdn}}'>
+	     {{node.fqdn}}
+	   </a>
+	  </td>
 	</tr>
 	{% endfor %}
       </table>
