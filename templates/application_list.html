@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>{{application_list|length}} Deployments</h1>
+    <p>
+      Information on the current state of <strong>{{application_list|length}}</strong> deployments.
+    </p>
+  </div>
+</div>
+<ul>
+{% for application_name in application_list %}
+<li><a href='/deployments/{{application_name}}/'>{{application_name}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

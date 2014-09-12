@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>{{application_name}} Deployments</h1>
+    <p>
+      Information on the current state of <strong>{{nodes|length}}</strong> deployments
+      for the '{{application_name}}' over all the known environments.
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Example row of columns -->
+      
+      <table class="table table-striped">
+	<tr>
+	  <th>environment</th>
+	  <th>version</th>
+	  <th>deployment date</th>
+	  <th>deployment date</th>
+	  <th>links</th>
+	  <th>Nodes</th>
+	</tr>
+	{% for environment_name, node in nodes.items() %}
+	<tr>
+	  <td>{{node.mhs_environment}}</td>
+	  <td>{{node.deployment_version}}</td>
+	  <td>{{node.deployment_date}}</td>
+	  <td>{{node.deployment_days_ago}}</td>
+	  <td>
+	    {% for url in node.mhs_webservers %}
+	    <a href='http://{{url}}'>{{url}}</a>
+	    {% endfor %}
+	  </td>
+	  <td>{{node.fqdn}}</td>
+	</tr>
+	{% endfor %}
+      </table>
+      {% endblock %}
+</div>

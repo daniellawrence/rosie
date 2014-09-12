@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 import pypuppetdb
 import datetime
 
 app = Flask(__name__)
-pdb = pypuppetdb.connect(host='puppet')
+pdb = pypuppetdb.connect(host='puppet.f2l.info')
 FACT_PREFIX = "mhs"
 
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return redirect("/deployments/")
 
 
 @app.route("/deployments/")
@@ -30,9 +30,7 @@ def application_list():
 
     return render_template(
         "application_list.html",
-        {
-            'application_list': application_list,
-        }
+        application_list=application_list
     )
 
 
@@ -41,7 +39,7 @@ def deployment(application_name):
     deployment_date_fact = 'mhs_%s_deploy_date' % application_name
     deployment_version_fact = 'mhs_%s_version' % application_name
     nodes = {}
-    current_date = now()
+    current_date = datetime.datetime.now()
 
     clean_up_map = (
         # (deployment_date_fact, 'deployment_date'),
@@ -64,7 +62,7 @@ def deployment(application_name):
         for dirty, clean in clean_up_map:
             facts[clean] = facts[dirty]
 
-        deployment_date = strptime(
+        deployment_date = datetime.datetime.strptime(
             facts[deployment_date_fact],
             '%Y-%m-%d %H:%M:%S'
         )
@@ -76,19 +74,23 @@ def deployment(application_name):
 
         # If we have an mhs_webservers fact, then turn it into a list
         # as we do not want to play around with a csv
+        node_uniq_key = environment_name
         if 'mhs_webservers' in facts:
+            node_uniq_key = facts['mhs_webservers']
             facts['mhs_webservers'] = facts['mhs_webservers'].split(',')
 
-        nodes[environment_name] = facts
+            if len(facts['mhs_webservers']) > 1 and facts['fqdn'] in facts['mhs_webservers']:
+                facts['mhs_webservers'].pop(
+                    facts['mhs_webservers'].index(facts['fqdn'])
+                ) 
 
+        nodes[node_uniq_key] = facts
     return render_template(
-        "home.html",
-        {
-            'nodes': nodes,
-            'application_name': application_name,
-            'deployment_date_fact': deployment_date_fact,
-            'deployment_version_fact': deployment_version_fact
-        }
+        "deployment.html",
+        nodes=nodes,
+        application_name=application_name,
+        deployment_date_fact=deployment_date_fact,
+        deployment_version_fact=deployment_version_fact
     )
 
 
