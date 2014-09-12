@@ -5,17 +5,25 @@ import datetime
 from settings import FACT_PREFIX, PUPPETDB_SERVER
 
 app = Flask(__name__)
-pdb = pypuppetdb.connect(host=PUPPETDB_SERVER)
 
 
-@app.route("/")
-def index():
-    return redirect("/deployments/")
+def get_puppetdb_connection():
+    return pypuppetdb.connect(host=PUPPETDB_SERVER)
 
 
-@app.route("/deployments/")
-def application_list():
-    application_list = []
+def get_nodes_with_fact(pdb, fact_name):
+    facts = {}
+    for fact in pdb.facts(fact_name):
+        node_name = fact.node
+        for nf in pdb.node(node_name).facts():
+            node_fact_name = nf.name
+            node_fact_value = nf.value
+            facts[node_fact_name] = node_fact_value
+    return fact
+
+
+def get_application_list():
+    pdb = get_puppetdb_connection()
 
     for factname in pdb.fact_names():
 
@@ -26,18 +34,31 @@ def application_list():
         if not factname.endswith('_deploy_date'):
             continue
 
+        # clean up the app name for the pretty list
         app_name = factname.replace(FACT_PREFIX, '')
         app_name = app_name.replace('_deploy_date', '')
         application_list.append(app_name)
+    return application_list
 
+
+@app.route("/")
+def index():
+    return redirect("/deployments/")
+
+
+@app.route("/deployments/")
+def application_list():
     return render_template(
         "application_list.html",
-        application_list=application_list
+        application_list=get_application_list()
     )
 
 
 @app.route("/deployments/<application_name>/")
 def deployment(application_name):
+    pdb = get_puppetdb_connection()
+    # get_nodes_with_fact(pdb, deployment_date_fact)
+
     deployment_date_fact = '%s%s_deploy_date' % (
         FACT_PREFIX, application_name
     )
