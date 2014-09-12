@@ -25,20 +25,16 @@
 	</tr>
 	{% for environment_name, node in nodes.items() %}
 	<tr>
-	  <td>{{node.mhs_environment}}</td>
+	  <td>{{node.environment}}</td>
 	  <td>{{node.deployment_version}}</td>
 	  <td>{{node.deployment_date}}</td>
 	  <td>{{node.deployment_days_ago}}</td>
 	  <td>
-	    {% for url in node.mhs_webservers %}
+	    {% for url in node.webservers %}
 	    <a href='http://{{url}}'>{{url}}</a>
 	    {% endfor %}
 	  </td>
-	  <td>
-	   <a href='http://puppet.f2l.info:8000/node/{{node.fqdn}}'>
-	     {{node.fqdn}}
-	   </a>
-	  </td>
+	  <td>{{node.fqdn}}</td>
 	</tr>
 	{% endfor %}
       </table>
