@@ -1,0 +1,34 @@
+
+ul.project-listing {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.project-listing li {
+    display: inline-block;
+    float: left;
+    margin: 0;
+    width: 33.333332%;
+    padding: 0;
+}
+
+ul.project-listing li a {
+    display: block;
+    margin: 2px 2px 0 0;
+    border: 1px solid #EEE;
+    border-radius: 3px;
+    padding: 20px;
+    min-height: 140px;
+    overflow: hidden;
+    font-size: 32px;
+    color: #555;
+    transition: all 0.2s ease-out;
+}
+
+ul.project-listing li a:hover {
+    background-color: #428BCA;
+    color: #FFF;
+    text-decoration: none;
+}
+

@@ -9,9 +9,13 @@
     </p>
   </div>
 </div>
-<ul>
-{% for application_name in application_list %}
-<li><a href='/deployments/{{application_name}}/'>{{application_name}}</a></li>
-{% endfor %}
-</ul>
+
+ <div class="container">
+   <ul class="project-listing"> 
+     {% for application_name in application_list %}
+     <li><a href='/deployments/{{application_name}}/'>{{application_name}}</a></li>
+     {% endfor %}
+   </ul>
+ </div>
+ 
 {% endblock %}
